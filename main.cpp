@@ -174,22 +174,38 @@ vector<vector<int> > Print(TreeNode* pRoot) {
 
 }
 
+void Serialize_recursive(TreeNode *root, string& str) {
+    if(root == nullptr)
+        str += "$";
+    else {
+        str += to_string(root->val);
+        Serialize_recursive(root->left, str);
+        Serialize_recursive(root->right, str);
+    }
+}
+
+
 /**
  * 序列化和反序列化二叉树
  * @param root
  * @return
  */
 char* Serialize(TreeNode *root) {
-    char* res = new char();
+    string res;
     //根据前序遍历对二叉树进行序列化
     if(root== nullptr){
-
+        return nullptr;
     }
-
-
+    Serialize_recursive(root,res);
+    int len_s = res.length();
+    char *ret = new char[len_s+1];
+    res.copy(ret,len_s);
+    ret[len_s] = '\0';
+    return ret;
 }
-TreeNode* Deserialize(char *str) {
 
+TreeNode* Deserialize(char *str) {
+    //使用一个栈来存储
 }
 
 
@@ -199,7 +215,21 @@ int main() {
     root->right = new TreeNode(3);
     vector<vector<int>> res = Print(root);
 
-    cout << Add(5,7) << endl;
+    //string 与 字符指针之间的关系
+    string str = "ksfsk";
+    char* c = &str[0];
+    while(*c!='\0') {
+        cout << *c;
+        c++;
+    }
 
+    string s ="sf";
+    cout << s + to_string(1) << endl;
+
+    char* a = Serialize(root);
+    while(*a!='\0') {
+        cout << *a;
+        a++;
+    }
     return 0;
 }
