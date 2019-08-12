@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <queue>
 #include <stack>
+#include <stdlib.h>
 using namespace std;
 
 #include <algorithm>
@@ -176,9 +177,10 @@ vector<vector<int> > Print(TreeNode* pRoot) {
 
 void Serialize_recursive(TreeNode *root, string& str) {
     if(root == nullptr)
-        str += "$";
+        str += "$,";
     else {
         str += to_string(root->val);
+        str += ",";
         Serialize_recursive(root->left, str);
         Serialize_recursive(root->right, str);
     }
@@ -198,21 +200,61 @@ char* Serialize(TreeNode *root) {
     }
     Serialize_recursive(root,res);
     int len_s = res.length();
-    char *ret = new char[len_s+1];
-    res.copy(ret,len_s);
-    ret[len_s] = '\0';
+    char *ret = new char[len_s];
+    res.copy(ret,len_s-1);
+    ret[len_s-1] = '\0';
     return ret;
 }
 
 TreeNode* Deserialize(char *str) {
     //使用一个栈来存储
+    stack<TreeNode*> temp;
+    if(str== nullptr)
+        return nullptr;
+    //字符串分割
+    char *token = strtok(str,",");
+    TreeNode *root = new TreeNode(stoi(token)), *node = root;
+    token = strtok(nullptr, "," );
+    temp.push(node);
+    while(token){
+        if(*token!='$'){
+            TreeNode* tem = new TreeNode(stoi(token));
+            if(node) {
+                node->left = tem;
+                temp.push(tem);
+                node = tem;
+            }else {
+                node = temp.top();
+                node->right = tem;
+                temp.pop();
+                temp.push(tem);
+                node = tem;
+            }
+        }else{
+            if(node) {
+                node->left = nullptr;
+                //temp.push(node);
+            }else {
+                node = temp.top();
+                node->right = nullptr;
+                temp.pop();
+            }
+            node = nullptr;
+        }
+        token = strtok(nullptr, "," );
+    }
+    return root;
 }
 
 
 int main() {
-    TreeNode* root = new TreeNode(1);
-    root->left = new TreeNode(2);
-    root->right = new TreeNode(3);
+    TreeNode* root = new TreeNode(8);
+    root->left = new TreeNode(6);
+    root->right = new TreeNode(10);
+    root->left->left = new TreeNode(5);
+    root->left->right = new TreeNode(7);
+    root->right->left = new TreeNode(9);
+    root->right->right = new TreeNode(11);
     vector<vector<int>> res = Print(root);
 
     //string 与 字符指针之间的关系
@@ -227,9 +269,17 @@ int main() {
     cout << s + to_string(1) << endl;
 
     char* a = Serialize(root);
-    while(*a!='\0') {
-        cout << *a;
-        a++;
-    }
+//    while(*a!='\0') {
+//        cout << *a;
+//        a++;
+//    }
+    cout << endl;
+    TreeNode *ndoe = Deserialize(a);
+
+//    char *token = strtok(a,",");
+//    while(token){
+//        cout << *token << endl;
+//        token = strtok(nullptr, "," );
+//    }
     return 0;
 }
