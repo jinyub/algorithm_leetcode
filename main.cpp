@@ -247,39 +247,141 @@ TreeNode* Deserialize(char *str) {
 }
 
 
-int main() {
-    TreeNode* root = new TreeNode(8);
-    root->left = new TreeNode(6);
-    root->right = new TreeNode(10);
-    root->left->left = new TreeNode(5);
-    root->left->right = new TreeNode(7);
-    root->right->left = new TreeNode(9);
-    root->right->right = new TreeNode(11);
-    vector<vector<int>> res = Print(root);
 
-    //string 与 字符指针之间的关系
-    string str = "ksfsk";
-    char* c = &str[0];
-    while(*c!='\0') {
-        cout << *c;
-        c++;
+
+/**
+ * 机器人的运动范围
+ * 回溯法
+ * @param threshold
+ * @param rows
+ * @param cols
+ * @return
+ */
+
+//判断坐标的数位之和是否有超过阈值
+bool judge_threshold(int x, int y, int threshold) {
+    int count = 0;
+    while(x){
+        count += x % 10;
+        x = x / 10;
+    }
+    while(y){
+        count += y % 10;
+        y = y / 10;
     }
 
-    string s ="sf";
-    cout << s + to_string(1) << endl;
+    return count > threshold;
 
-    char* a = Serialize(root);
-//    while(*a!='\0') {
-//        cout << *a;
-//        a++;
-//    }
-    cout << endl;
-    TreeNode *ndoe = Deserialize(a);
+}
 
-//    char *token = strtok(a,",");
-//    while(token){
-//        cout << *token << endl;
-//        token = strtok(nullptr, "," );
-//    }
+void run_threshold(int threshold, int s_x, int s_y, vector<int> &flag, int n, int m) {
+    //若不满足条件则将结果记录
+    if(judge_threshold(s_x,s_y,threshold)){
+        return;
+    }
+    //起点的index
+    int s_index = s_x * m + s_y;
+    flag[s_index] = 0; //走过之后置位0
+    // 往上走
+    s_x--;
+    s_index = s_x*m+s_y;
+    if(s_x>=0 && flag[s_index]){
+        run_threshold(threshold,s_x,s_y,flag,n,m);
+    }
+    // 往左走
+    s_x++;
+    s_y--;
+    s_index = s_x*m+s_y;
+    if(s_y>=0&&flag[s_index]){
+        run_threshold(threshold,s_x,s_y,flag,n,m);
+    }
+    // 往右走
+    s_y++;
+    s_y++;
+    s_index = s_x*m+s_y;
+    if(s_y<m&&flag[s_index]){
+        run_threshold(threshold,s_x,s_y,flag,n,m);
+    }
+    // 往下走
+    s_y--;
+    s_x++;
+    s_index = s_x*m+s_y;
+    if(s_x<n&&flag[s_index]){
+        run_threshold(threshold,s_x,s_y,flag,n,m);
+    }
+
+}
+
+int movingCount(int threshold, int rows, int cols)
+{
+    //定义一个一维数组，用于标记哪些格子是已经走过的；
+    vector<int> flag(rows*cols,1);
+    run_threshold(threshold,0,0,flag,rows,cols);
+    int count = 0;
+    for (int i = 0; i < rows*cols; ++i) {
+        count+=!flag[i];
+    }
+    return count;
+}
+
+
+
+//腾讯笔试题
+
+bool run(vector<int> flag, int s_x, int s_y, int t_x, int t_y, int n, int m) {
+
+    //起终点的index
+    int s_index = (s_x-1)*m+s_y-1, t_index=(t_x-1)*m+t_y-1;
+    flag[s_index] = flag[s_index]-1;
+    //循环结束条件
+    if(s_index==t_index) {
+        if(flag[t_index]==0)
+            return true;
+        else if(flag[t_index]==1){
+            return run(flag,s_x,s_y,t_x,t_y,n,m);
+        }
+    }
+    // 往上走
+    s_x--;
+    s_index = (s_x-1)*m+s_y-1;
+    bool res = false;
+    int flag_c=1;
+    if(s_x>=1 && flag[s_index]){
+        res = run(flag,s_x,s_y,t_x,t_y,n,m);
+    }
+    // 往左走
+    s_x++;
+    s_y--;
+    s_index = (s_x-1)*m+s_y-1;
+    if(!res&&s_y>=1&&flag[s_index]){
+        res = run(flag,s_x,s_y,t_x,t_y,n,m);
+    }
+    // 往右走
+    if(flag_c) {
+        s_y++;
+        flag_c = 1;
+    }
+    s_y++;
+    s_index = (s_x-1)*m+s_y-1;
+    if(!res&&s_y<=m&&flag[s_index]){
+        res = run(flag,s_x,s_y,t_x,t_y,n,m);
+        flag_c = 1;
+    }
+    // 往下走
+    if(flag_c) {
+        s_y--;
+    }
+    s_x++;
+    s_index = (s_x-1)*m+s_y-1;
+    if(!res&&s_x<=n&&flag[s_index]){
+        res = run(flag,s_x,s_y,t_x,t_y,n,m);
+    }
+    return res;
+}
+
+
+
+int main() {
+    cout << movingCount(10,1,10) << endl;
     return 0;
 }
