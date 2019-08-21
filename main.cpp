@@ -379,9 +379,100 @@ bool run(vector<int> flag, int s_x, int s_y, int t_x, int t_y, int n, int m) {
     return res;
 }
 
+//华为笔试：报文转义
+int as(){
+    int len;
+    cin >> len;
+    vector<int> bw;
+    int temp;
+    len--;
+    vector<int> res;
+    int count=0, flag = 1;
+    while(len--) {
+        flag = 0;
+        scanf("%X",&temp);
+        if(temp==10) {
+            res.push_back(18);
+            res.push_back(52);
+            count += 2;
+        }else if(temp==11){
+            res.push_back(171);
+            res.push_back(205);
+            count += 2;
+        } else {
+            res.push_back(temp);
+            count += 1;
+        }
+    }
+    if(flag)
+        printf("%X",count+2);
+    else
+        printf("%X",count+1);
+    cout << " ";
+    int j;
+    for (j = 0; j < res.size() - 1 ; ++j) {
+        printf("%X",res[j]);
+        cout << " ";
+    }
+    printf("%X",res[j]);
 
+    return 0;
+}
+
+//华为笔试题，质数组合问题
+int zuhe(int low, int high) {
+    int s_count = 0, g_count = 0;
+    int count = 0;
+    for (int i = low; i < high; ++i) {
+        //判断是否为质数
+        int flag = 1;
+        for (int j = 2; j <= i/2; ++j) {
+            if(i%j==0){
+                flag = 0;
+                count++;
+                break;
+            }
+        }
+        if(flag){
+            g_count += i%10;
+            s_count += (i/10)%10;
+        }
+    }
+    return g_count < s_count ? g_count : s_count;
+}
+
+//构建乘积数组
+vector<int> multiply(const vector<int>& A) {
+    vector<int> l_to_r,r_to_l(A.size(),0),res;
+    int temp = 1;
+    for (int i = 0; i < A.size(); ++i) {
+        temp *= A[i];
+        l_to_r.push_back(temp);
+    }
+    temp = 1;
+    for (int j = A.size()-1; j >=0 ; --j) {
+        temp *= A[j];
+        r_to_l[j] = temp;
+    }
+    res.push_back(r_to_l[1]);
+    for (int k = 1; k < A.size()-1; ++k) {
+        res.push_back(r_to_l[k+1]*l_to_r[k-1]);
+    }
+    res.push_back(l_to_r[A.size()-2]);
+    return res;
+}
+
+//表示数值的字符串
+//符号位只能出现在开头，或者是e的右边
+//e不能出现在开头
+//e两边要有数字，且右边应该为整数
+//不能出现其它字母
+bool isNumeric(char* string)
+{
+
+}
 
 int main() {
-    cout << movingCount(10,1,10) << endl;
+    cout << rand()%10 << endl;
     return 0;
 }
