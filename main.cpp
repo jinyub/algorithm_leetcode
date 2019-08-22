@@ -8,7 +8,7 @@
 using namespace std;
 
 #include <algorithm>
-
+#include <string.h>
 
 class Solution {
 public:
@@ -469,10 +469,55 @@ vector<int> multiply(const vector<int>& A) {
 //不能出现其它字母
 bool isNumeric(char* string)
 {
-
+    int i = 0;
+    int flag = 0;//表示是否出现e
+    int flag_dot = 0;
+    bool res = true;
+    char temp;
+    while(*string!='\0'){
+        temp = *string;
+        if(temp>='0'&&temp<='9') {
+            i++;
+            string++;
+            continue;
+        }
+        else if(temp=='+' || temp == '-'){
+            if(i!=0&&flag==0){
+                res= false;
+                return res;
+            }
+        }else if(temp=='e'||temp=='E'){
+            if(flag==0 && i!=0){
+                flag=1;
+            }else{
+                res = false;
+                return res;
+            }
+        }else if(temp=='.'){
+            if(flag_dot==0 && i!=0 && flag==0){
+                flag_dot = 1;
+            }else{
+                res = false;
+                return res;
+            }
+        }else {
+            res = false;
+            return res;
+        }
+        i++;
+        string++;
+    }
+    if(temp=='e'|| temp=='E' || temp=='.')
+        return false;
+    return res;
 }
 
 int main() {
-    cout << rand()%10 << endl;
+    char *s = new char[100];
+    s[0] = '1';
+    s[1] = '2';
+    s[2] = 'e';
+    s[3] = '\0';
+    cout << isNumeric(s) << endl;
     return 0;
 }
