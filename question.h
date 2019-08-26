@@ -14,6 +14,44 @@
 #include <algorithm>
 using namespace std;
 
+int removeDuplicates(vector<int>& nums) {
+    //int len = nums.size();
+    //i表示遍历整个数组的索引
+    if (nums.empty())
+        return 0;
+    int temp = nums[0];
+    int j = 1; //j表示存储的索引
+    int count = 1;
+    for (unsigned int i = 1; i < nums.size(); ++i) {
+        if(nums[i]>temp){
+            temp = nums[i];
+            nums[j] = nums[i];
+            j++;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int maxProfit(vector<int>& prices) {
+    if(prices.empty())
+        return 0;
+    int buy_in_price = prices[0];
+    int sold_out_price = prices[0];
+    int profit = 0;
+    for (int k = 1; k < prices.size(); ++k) {
+        if(prices[k] > sold_out_price){
+            sold_out_price = prices[k];
+        }else{
+            profit += sold_out_price - buy_in_price;
+            buy_in_price = sold_out_price = prices[k];
+        }
+    }
+    profit += sold_out_price - buy_in_price;
+    return profit;
+}
+
 void rotate(vector<int>& nums, int k) {
     int len = nums.size();
     if(len ==0)
