@@ -170,51 +170,58 @@ void sortColors_r(vector<int>& nums) {
 /**
  * leetcode 5 最长回文子串
  * 从中间向两边扩散
+ * 还有是无中心点的情况
  * @param s
  * @return
  */
 string longestPalindrome(string s) {
     if(s.empty())
         return "";
-    int len = s.length();
-    string max;
-    max += s[0];
+    int len = s.length(),max_len=0;
+    int max = 0;
     //判断全部相同的情况
-    int flag = 1;
-    for (int i = 1; i < len-1; ++i) {
-        if(s[i]!=s[0]){
-            flag=0;
+    int start=0,end=0;
+    for (int i = 0; i < len; ++i) {
+        //有中心点情况
+        int j=1,len1=0,len2=0;
+        while((i-j)>=0&&(i+j)<=len&&s[i-j]==s[i+j]){
+            j++;
+            len1++;
         }
-        string temp;
-        if(s[i]==s[i-1]&&s[i]!=s[i+1]){
-            temp += s[i-1];
-            temp += s[i];
-        }else if(s[i]==s[i+1]&&s[i]!=s[i-1]){
-            temp += s[i];
-            temp += s[i+1];
-        }else{
-            int j = 1;
-            temp = s[i];
-            while((i-j)>=0&&(i+j)<=len&&s[i-j]==s[i+j]){
-                temp = s[i-j]+temp;
-                temp+=s[i+j];
-                j++;
-            }
-        }
-        if(temp.length()>max.length()){
-            max = temp;
-        }
-    }
+        len1 = 2*len1 + 1;
 
-    if((len==2&&s[0]==s[1])||(len>2&&flag&&s[len-1]==s[0])){
-        return s;
+        //无中心点情况
+        j=1;
+        while((i-j)>=0&&(i+j-1)<=len&&s[i-j]==s[i+j-1]){
+            j++;
+            len2++;
+        }
+        len2 = 2*len2;
+
+        len1 = len1 > len2 ? len1 : len2;
+        if(len1>max){
+            max = len1;
+            start = i-len1/2;
+            end = i+(len1-1)/2;
+            max_len = len1;
+        }
     }
-    return max;
+    return s.substr(start,max_len);
+}
+
+/**
+ * leetcode 137
+ * 只出现一次的数字
+ * @param nums
+ * @return
+ */
+int singleNumber(vector<int>& nums) {
+
 }
 
 int main() {
 //    string a;
 //    cout << a.length() << endl;
-    cout << longestPalindrome("aaabaaaa") << endl;
+    cout << longestPalindrome("aaaabaaaaa") << endl;
     return 0;
 }
