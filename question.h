@@ -1146,14 +1146,6 @@ void FindNumsAppearOnce(vector<int> data,int* num1,int *num2) {
 //接着把原数组分成两组，分组标准是第x位是否为1。如此，相同的数字肯定在同一组，不同数字在不同组。
 //再对每组做异或计算，则出来的结果就是两个不同的数字
 
-struct TreeNode {
-    int val;
-    struct TreeNode *left;
-    struct TreeNode *right;
-    TreeNode(int x) :
-            val(x), left(NULL), right(NULL) {
-    }
-};
 
 //把二叉树打印成多行
 vector<vector<int> > Print(TreeNode* pRoot) {
@@ -1266,7 +1258,6 @@ bool hasPath(char* matrix, int rows, int cols, char* str)
     }
     return false;
 }
-
 class Solution {
 public:
     vector<int> data_stream;
@@ -1768,5 +1759,59 @@ bool isNumeric(char* string)
         return false;
     return res;
 }
+//将两个排序结果进行合并
+void merge(vector<int>&data, int l, int mid, int r, int& res) {
+    //分配一个辅助空间用于保存原有的数据
+    vector<int> temp;
+    for (int i = l; i <=r ; ++i) {
+        temp.push_back(data[i]);
+    }
+    //将两个排序好的数组进行合并
+    int fir = l,fin = l,offset=l,sec=mid;
+    while (sec<=r&&fir<mid){
+        if(temp[sec-offset]<temp[fir-offset]){
+            data[fin++] = temp[sec-offset];
+            res+=mid-fir;
+            sec++;
+        }else{
+            data[fin++] = temp[fir-offset];
+            fir++;
+        }
+    }
+    while(fir<mid){
+        data[fin++] = temp[fir-offset];
+        fir++;
+    }
+    while(sec<=r){
+        data[fin++] = temp[sec-offset];
+        sec++;
+    }
 
+}
+
+//归并排序data[l...r]
+void merge_sort(vector<int>& data, int l, int r, int& res) {
+    if(l<r) {
+        int mid = (r + l) / 2;
+        //左边排序结果
+        if(l!=mid)
+            merge_sort(data, l, mid, res);
+        //右边排序结果
+        if(r!=mid+1)
+            merge_sort(data, mid+1,r, res);
+        //将两个排序结果进行合并
+        merge(data,l,mid+1,r, res);
+    }
+}
+
+//数组中的逆序对
+int InversePairs(vector<int> data) {
+    if(data.empty())
+        return 0;
+    int len = data.size();
+    int res = 0;
+    //归并排序
+    merge_sort(data,0,len-1,res);
+    return res;
+}
 #endif //LEETCODE_QUESTION_H
