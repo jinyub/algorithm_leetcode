@@ -51,5 +51,6 @@ vector<int> maxInWindows(const vector<int>& num, unsigned int size)
 }
 
 int main() {
+
     return 0;
 }
