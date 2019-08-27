@@ -4,12 +4,12 @@
 #include <unordered_map>
 #include <queue>
 #include <stack>
-#include <stdlib.h>
-#include <limits.h>
+#include <cstdlib>
+#include <climits>
 using namespace std;
 
 #include <algorithm>
-#include <string.h>
+#include <cstring>
 
 //找滑动窗口中的最大值
 //这种思路相当于求固定size中的最大值，时间复杂度为O(n*size)
@@ -219,9 +219,118 @@ int singleNumber(vector<int>& nums) {
 
 }
 
+int __merge(vector<int>& nums, int l, int r) {
+    int j=l;
+    for (int i = l+1; i <= r; ++i) {
+        if(nums[i]<nums[l]){
+            j++;
+            swap(nums[j],nums[i]);
+        }
+    }
+    swap(nums[l],nums[j]);
+
+    return j;
+}
+
+void __quick_sort(vector<int>& nums, int l, int r) {
+    if(l>=r)
+        return;
+    int p = __merge(nums,l,r);
+    __quick_sort(nums,l,p-1);
+    __quick_sort(nums,p+1,r);
+}
+
+/**
+ * 快速排序
+ * @param nums
+ */
+void quick_sort(vector<int>& nums) {
+    int len = nums.size();
+    __quick_sort(nums,0,len-1);
+}
+
+bool __greater(const int & m1, const int & m2) {
+    return m1 < m2;
+}
+
+/**
+ * leetcode 15
+ * 三数之和 a+b+c = 0
+ * @param nums
+ * @return
+ */
+vector<vector<int>> threeSum(vector<int>& nums) {
+    vector<vector<int>> res;
+    if(nums.empty())
+        return res;
+    int len = nums.size();
+    int sum_t=0;
+    //消除重复，先进行一个排序
+    sort(nums.begin(),nums.end(),__greater);
+    unordered_map<int,int> first;
+    //固定一个数
+    for (int i = 0; i < len-2; ++i) {
+        if(first[nums[i]]){
+            continue;
+        }else{
+            first[nums[i]] = 1;
+        }
+        sum_t = 0-nums[i];
+        unordered_map<int,int> second;
+        for (int j = i+1; j < len-1; ++j) {
+            if(second[nums[j]]){
+                continue;
+            }else{
+                second[nums[j]] = 1;
+            }
+            unordered_map<int,int> thrid;
+            for (int k = j+1; k < len; ++k) {
+                if(thrid[nums[k]]){
+                    continue;
+                }else{
+                    thrid[nums[k]] = 1;
+                }
+                if(nums[j]+nums[k]==sum_t){
+                    vector<int> temp = {nums[i],nums[j],nums[k]};
+                    res.push_back(temp);
+                    break;
+                }else if(nums[j]+nums[k] > sum_t){
+                    break;
+                }
+            }
+        }
+    }
+    return res;
+}
+
+vector<vector<int>> threeSum_i (vector<int>& nums) {
+    int target;
+    vector<vector<int>> ans;
+    sort(nums.begin(), nums.end());
+    for (int i = 0; i < nums.size(); i++) {
+        if (i > 0 && nums[i] == nums[i - 1]) continue;
+        if ((target = nums[i]) > 0) break;
+        int l = i + 1, r = nums.size() - 1;
+        while (l < r) {
+            if (nums[l] + nums[r] + target < 0) ++l;
+            else if (nums[l] + nums[r] + target > 0) --r;
+            else {
+                ans.push_back({target, nums[l], nums[r]});
+                ++l, --r;
+                while (l < r && nums[l] == nums[l - 1]) ++l;
+                while (l < r && nums[r] == nums[r + 1]) --r;
+            }
+        }
+    }
+    return ans;
+}
+
 int main() {
 //    string a;
 //    cout << a.length() << endl;
-    cout << longestPalindrome("aaaabaaaaa") << endl;
+//    cout << longestPalindrome("aaaabaaaaa") << endl;
+    vector<int> test = {-1,0,1,2,-1,-4};
+    vector<vector<int>> res = threeSum(test);
+
     return 0;
 }
