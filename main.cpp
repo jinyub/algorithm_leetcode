@@ -325,12 +325,58 @@ vector<vector<int>> threeSum_i (vector<int>& nums) {
     return ans;
 }
 
+
+//美团笔试
+int mid_search(vector<int> a1,vector<int> a2,int f_1,int f_2,int s_1,int s_2){
+    if(f_1==f_2){
+        return a1[f_1];
+    }
+    if(s_1==s_2){
+        return a2[s_1];
+    }
+    int mid1 = (f_2+f_1)/2;
+    int mid2 = (s_2+s_1)/2;
+    if(a1[mid1]>a2[mid2]){
+        return mid_search(a1,a2,f_1,mid1,mid2,s_2);
+    }else if(a1[mid1]<a2[mid2]){
+        return mid_search(a1,a2,mid1,f_2,s_1,mid2);
+    } else
+        return a1[mid1];
+}
+
+
+//字符串的转置
+void reverse(vector<char>& s, int size) {
+    int len = s.size();
+    int mid = len/2;
+
+    for (int i = 0; i < mid; ++i) {
+        swap(s[i],s[len-1-i]);
+    }
+    int mid1 = (len-size)/2;
+    int start = len-size-1;
+    for (int j = 0; j < mid1; ++j) {
+        swap(s[j],s[start-j]);
+    }
+    int mid2 = size/2;
+    int j=0;
+    for (int k = start+1; k < start+1+mid2; ++k) {
+        swap(s[k],s[len-1-j]);
+        j++;
+    }
+}
+
+
 int main() {
 //    string a;
 //    cout << a.length() << endl;
 //    cout << longestPalindrome("aaaabaaaaa") << endl;
-    vector<int> test = {-1,0,1,2,-1,-4};
-    vector<vector<int>> res = threeSum(test);
+//    priority_queue<int> s;
+    vector<char> test = {'a','b','c','d','e','f','g'};
+    reverse(test,3);
+    for (int i = 0; i < test.size(); ++i) {
+        cout << test[i];
+    }
 
     return 0;
 }
