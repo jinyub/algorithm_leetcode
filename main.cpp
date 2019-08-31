@@ -366,17 +366,131 @@ void reverse(vector<char>& s, int size) {
     }
 }
 
+/**
+ * 正则表达式匹配
+ * '.' 作为一个字符，若碰到不匹配的，则看后一个字符是否是'*'
+ * 'aaa' 与 'ab*ac*a'匹配
+ * @param str
+ * @param pattern
+ * @return
+ */
+
+//考虑使用递归来做
+bool match_rec(char* str, char* pattern, int a, int b) {
+    if(str[a]==pattern[b]){
+        if(pattern[b+1]=='*'){
+            if(str[a+1]!='\0'&&str[a+1]==pattern[b])
+                return match_rec(str,pattern,a+1,b) || match_rec(str,pattern,a+1,b+2);
+            else
+                return match_rec(str,pattern,a+1,b+2);
+
+        }else if(str[a]=='\0') {
+            return true;
+        }else
+            return match_rec(str,pattern,a+1,b+1);
+    }else{
+        if(pattern[b]=='.'){
+            if(pattern[b+1]=='*'){
+                return match_rec(str,pattern,a+1,b) || match_rec(str,pattern,a+1,b+2);
+            } else {
+                if(str[a]!='\0')
+                    return match_rec(str,pattern,a + 1, b + 1);
+                else
+                    return false;
+            }
+        }else if(pattern[b+1]=='*'){
+            return match_rec(str,pattern,a,b+2);
+        }else if(str[a]=='\0'){
+            if(a==0)
+                return true;
+            if(pattern[b+1]=='*'){
+                return match_rec(str,pattern,a,b+2);
+//                while(pattern[b+2]&&pattern[b+2]==str[a-1]){
+//                    b++;
+//                }
+//                if(pattern[b+2]=='\0'){
+//                    return true;
+//                }
+            }
+//            if(str[a-1]==pattern[b]){
+//                if(pattern[b-1]=='*') {
+//                    if(pattern[b+1]!='\0')
+//                        return match_rec(str, pattern, a, b + 1);
+//                    else if(pattern[b-2]==str[a-2])
+//                        return true;
+//                }
+//            }
+
+        }
+        return false;
+    }
+}
+
+bool match_u(char* str, char* pattern, int a, int b) {
+    if(pattern[b]=='\0'){
+        if(str[a]=='\0')
+            return true;
+        else
+            return false;
+    }else if(pattern[b]=='.'){
+        if(pattern[b+1]=='*'){
+            if(str[a]=='\0') {
+                if(a==0)
+                    return true;
+                else
+                    return false;
+            }
+            return match_u(str,pattern,a+1,b) || match_u(str,pattern,a+1,b+2) || match_u(str,pattern,a,b+2);
+        } else {
+            if(str[a]=='\0')
+                return false;
+            return match_u(str, pattern, a + 1, b + 1);
+        }
+    }else {
+        if(pattern[b]==str[a]) {
+            if(pattern[b+1]=='*'){
+                return match_u(str,pattern,a+1,b) || match_u(str,pattern,a+1,b+2) || match_u(str,pattern,a,b+2);
+            }
+            return match_u(str, pattern, a + 1, b + 1);
+        }
+        else if(str[a]=='\0'){
+            if(pattern[b+1]=='*'){
+                return match_u(str,pattern,a,b+2);
+            }
+        }
+        else if(str[a]!='\0'){
+            if(pattern[b+1]=='*'){
+                return match_u(str,pattern,a,b+2);
+            }
+        }
+    }
+    return false;
+}
+
+bool match(char* str, char* pattern)
+{
+    return match_u(str,pattern,0,0);
+}
+
 
 int main() {
-//    string a;
-//    cout << a.length() << endl;
-//    cout << longestPalindrome("aaaabaaaaa") << endl;
-//    priority_queue<int> s;
-    vector<char> test = {'a','b','c','d','e','f','g'};
-    reverse(test,3);
-    for (int i = 0; i < test.size(); ++i) {
-        cout << test[i];
-    }
+    char a[] = {'a','a','a','\0'};
+    char b[] = {'a','*','a','\0'};
+    char c[] = {'a','b','*','a','*','c','*','a','\0'};
+    char d[] = {'a','\0'};
+    char e[] = {'a','b','*','a','\0'};
+    char f[] = {'b','c','b','b','a','b','a','b','\0'};
+    char f1[] = {'.','*','a','*','a','\0'};
+    char g[] = {'\0'};
+    char g1[] = {'c','*','\0'};
+    char x[] = {'b','b','b','b','a','\0'};
+    char x1[] = {'.','*','a','*','a','\0'};
+    cout << match(g,g1) << endl;
+    cout << match(f,f1) << endl;
+    cout << match(a,b) << endl;
+    cout << match(a,c) << endl;
+    cout << match(d,g) << endl;
+    cout << match(x,x1) << endl;
 
     return 0;
 }
