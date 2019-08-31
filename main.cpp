@@ -368,64 +368,11 @@ void reverse(vector<char>& s, int size) {
 
 /**
  * 正则表达式匹配
- * '.' 作为一个字符，若碰到不匹配的，则看后一个字符是否是'*'
  * 'aaa' 与 'ab*ac*a'匹配
  * @param str
  * @param pattern
  * @return
  */
-
-//考虑使用递归来做
-bool match_rec(char* str, char* pattern, int a, int b) {
-    if(str[a]==pattern[b]){
-        if(pattern[b+1]=='*'){
-            if(str[a+1]!='\0'&&str[a+1]==pattern[b])
-                return match_rec(str,pattern,a+1,b) || match_rec(str,pattern,a+1,b+2);
-            else
-                return match_rec(str,pattern,a+1,b+2);
-
-        }else if(str[a]=='\0') {
-            return true;
-        }else
-            return match_rec(str,pattern,a+1,b+1);
-    }else{
-        if(pattern[b]=='.'){
-            if(pattern[b+1]=='*'){
-                return match_rec(str,pattern,a+1,b) || match_rec(str,pattern,a+1,b+2);
-            } else {
-                if(str[a]!='\0')
-                    return match_rec(str,pattern,a + 1, b + 1);
-                else
-                    return false;
-            }
-        }else if(pattern[b+1]=='*'){
-            return match_rec(str,pattern,a,b+2);
-        }else if(str[a]=='\0'){
-            if(a==0)
-                return true;
-            if(pattern[b+1]=='*'){
-                return match_rec(str,pattern,a,b+2);
-//                while(pattern[b+2]&&pattern[b+2]==str[a-1]){
-//                    b++;
-//                }
-//                if(pattern[b+2]=='\0'){
-//                    return true;
-//                }
-            }
-//            if(str[a-1]==pattern[b]){
-//                if(pattern[b-1]=='*') {
-//                    if(pattern[b+1]!='\0')
-//                        return match_rec(str, pattern, a, b + 1);
-//                    else if(pattern[b-2]==str[a-2])
-//                        return true;
-//                }
-//            }
-
-        }
-        return false;
-    }
-}
-
 bool match_u(char* str, char* pattern, int a, int b) {
     if(pattern[b]=='\0'){
         if(str[a]=='\0')
