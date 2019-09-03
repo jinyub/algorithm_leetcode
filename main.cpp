@@ -419,25 +419,87 @@ bool match(char* str, char* pattern)
     return match_u(str,pattern,0,0);
 }
 
+/**
+ * leetcode 64 最小路径和
+ * 只能往右或者往下走，遍历一遍grid，将最小路径记下
+ * @param grid
+ * @return
+ */
+int minPathSum(vector<vector<int>>& grid) {
+    if(grid.empty())
+        return 0;
+    int row = grid.size();
+    int col = grid[0].size();
+
+    for (int k = 1; k < col; ++k) {
+        grid[0][k] += grid[0][k-1];
+    }
+
+    for (int l = 1; l < row; ++l) {
+        grid[l][0] += grid[l-1][0];
+    }
+
+    for (int i = 1; i < row; ++i)
+        for (int j = 1; j < col; ++j) {
+            grid[i][j] = grid[i-1][j] < grid[i][j-1] ? grid[i][j] + grid[i-1][j] : grid[i][j] + grid[i][j-1];
+        }
+
+    return grid[row-1][col-1];
+}
+
+
+bool xxl_hs(vector<int> m, int start){
+    if(start==m.size())
+        return true;
+    if(m[start]==0)
+        return xxl_hs(m,start+1);
+    for (int j = start+1; j < m.size(); ++j) {
+        if(m[j]!=0&&m[start]!=m[j]){
+            int temp1 = m[start];
+            m[start] = 0;
+            int temp = m[j];
+            m[j] = 0;
+            if(xxl_hs(m,start+1)){
+                return true;
+            }else{
+//                start--;
+                m[start] = temp1;
+                m[j] = temp;
+            }
+        }
+    }
+    return false;
+}
+
+void xxl(){
+    int n;
+    cin >> n;
+    while(n--){
+        int m,temp,j=0;
+        cin >> m;
+        vector<int> a(m);
+        for (int i = 0; i < m; ++i) {
+            cin>>temp;
+            a[i] = temp;
+        }
+        sort(a.begin(),a.end());
+        if(xxl_hs(a,0))
+            cout << "YES" << endl;
+        else cout << "NO" << endl;
+    }
+}
+/**
+ * leetcode 72 编辑距离
+ *
+ * @param word1
+ * @param word2
+ * @return
+ */
+int minDistance(string word1, string word2) {
+
+}
 
 int main() {
-    char a[] = {'a','a','a','\0'};
-    char b[] = {'a','*','a','\0'};
-    char c[] = {'a','b','*','a','*','c','*','a','\0'};
-    char d[] = {'a','\0'};
-    char e[] = {'a','b','*','a','\0'};
-    char f[] = {'b','c','b','b','a','b','a','b','\0'};
-    char f1[] = {'.','*','a','*','a','\0'};
-    char g[] = {'\0'};
-    char g1[] = {'c','*','\0'};
-    char x[] = {'b','b','b','b','a','\0'};
-    char x1[] = {'.','*','a','*','a','\0'};
-    cout << match(g,g1) << endl;
-    cout << match(f,f1) << endl;
-    cout << match(a,b) << endl;
-    cout << match(a,c) << endl;
-    cout << match(d,g) << endl;
-    cout << match(x,x1) << endl;
-
+    xxl();
     return 0;
 }
