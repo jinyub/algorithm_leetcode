@@ -499,7 +499,139 @@ int minDistance(string word1, string word2) {
 
 }
 
-int main() {
-    xxl();
+//hulu1
+//带概率的约瑟夫环
+//输出为好人的概率
+//构建出链表
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode *pre;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+float ysf(vector<int> a, vector<int> w, int n, int m) {
+    vector<int> res(n,0);
+
+    //记录从每一个人开始时死亡的是好人还是坏人
+    for (int i = 0; i < n; ++i) {
+        //构建循环双向链表
+        ListNode *first_node = new ListNode(a[0]);
+        ListNode *temp = first_node;
+        for (int l = 1; l < n; ++l) {
+            ListNode *node = new ListNode(a[l]);
+            temp->next = node;
+            node->pre = temp;
+            temp = node;
+        }
+        temp->next = first_node;
+        first_node->pre = temp;
+
+        int count=0, count_in, start = i;
+        while(start--){
+            first_node = first_node->next;
+        }
+        ListNode* pre = first_node;
+        while(count<n-1){
+            count_in = 0;
+            while(count_in < m-1){
+                pre = pre->next;
+                count_in++;
+            }
+            ListNode *aaa = pre;
+            pre->pre->next = pre->next;
+            pre = pre->next;
+            delete(aaa);
+            count++;
+        }
+        res[i] = pre->val==1 ? 1 : 0;
+        break;
+    }
+    //求出好人的概率
+    float count = 0,count_good = 0;
+    for (int k = 0; k < n; ++k) {
+        if(res[k]==1){
+            count_good += w[k];
+        }
+        count += w[k];
+    }
+    return count_good/count;
+}
+
+//char pl;
+//do{
+//scanf("%d",&temp);
+//left.push_back(temp);
+//pl=getchar();
+//}while(k!='\n');
+
+//爱奇艺笔试
+//排列计数
+void pljs(vector<int> nums, vector<int> flags, int last, int count, int& sc) {
+    if(count == flags.size()){
+        sc++;
+        if(sc > 1000000007)
+            sc = sc % 1000000007;
+        return;
+    }
+    if(nums[count-1]==1){
+        for (int i = 0; i < last-1; ++i) {
+            if(flags[i]){
+                //满足条件
+                flags[i] = 0;
+                pljs(nums, flags, i+1, count + 1,sc);
+                flags[i] = 1;
+            }
+        }
+    }else if(nums[count-1]==0){
+        for (int i = last; i < flags.size(); ++i) {
+            if(flags[i]){
+                //满足条件
+                flags[i] = 0;
+                pljs(nums, flags, i+1, count + 1,sc);
+                flags[i] = 1;
+            }
+        }
+    }
+//    for (int i = 0; i < flags.size(); ++i) {
+//        //根据上一个值确定下一个
+//        if(flags[i]) {
+//            if (nums[count] == 1) {
+//                if (last > i+1) {
+//                    //满足条件
+//                    flags[i] = 0;
+//                    pljs(nums, flags, i+1, count + 1,sc);
+//                    flags[i] = 1;
+//                }
+//            }else{
+//                if(last < i+1){
+//                    //满足条件
+//                    flags[i] = 0;
+//                    pljs(nums, flags, i+1, count + 1,sc);
+//                    flags[i] = 1;
+//                }
+//            }
+//
+//        }
+//    }
+}
+
+
+int main(){
+    int n;
+    cin >> n;
+    int temp;
+    vector<int> nums(n-1);
+    for (int i = 0; i < n-1; ++i) {
+        cin >> temp;
+        nums[i] = temp;
+    }
+    vector<int> flags(n,1);
+    int count = 0, sc = 0;
+    for (int j = 0; j < n; ++j) {
+        flags[j] = 0;
+        pljs(nums,flags,j+1,1,sc);
+        flags[j] = 1;
+    }
+    cout << sc << endl;
     return 0;
 }
